@@ -43,6 +43,18 @@ public class ProductDomainService : IProductDomainService
         return products.Select(p => p.ToDto()).ToList();
     }
 
+    public async Task<List<ProductDto>> GetPagedAsync(bool inStock = false, int pageNr = 1, int pageSize = 10)
+    {
+        if (inStock)
+        {
+            var inStockProducts = await _productRepo.GetInStockPagedAsync(pageNr, pageSize);
+            return inStockProducts.Select(p => p.ToDto()).ToList();
+        }
+
+        var products = await _productRepo.GetPagedAsync(pageNr, pageSize);
+        return products.Select(p => p.ToDto()).ToList();
+    }
+
     public async Task<ProductDto?> UpdateAsync(Guid id, UpdateProductDto dto)
     {
         var product = await _productRepo.GetByIdAsync(id);

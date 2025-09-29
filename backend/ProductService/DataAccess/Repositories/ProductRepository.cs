@@ -20,11 +20,30 @@ public class ProductRepository : IProductRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Product>> GetPagedAsync(int pageNr, int pageSize)
+    {
+        return await _dbContext.Products
+            .Include(p => p.Categories)
+            .Skip((pageNr - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
     public async Task<IEnumerable<Product>> GetInStockAsync()
     {
         return await _dbContext.Products
             .Include(p => p.Categories)
             .Where(p => p.StockQuantity > 0)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<Product>> GetInStockPagedAsync(int pageNr, int pageSize)
+    {
+        return await _dbContext.Products
+            .Include(p => p.Categories)
+            .Where(p => p.StockQuantity > 0)
+            .Skip((pageNr - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
     }
 
