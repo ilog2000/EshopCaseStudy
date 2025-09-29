@@ -13,8 +13,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICategoryRepository, CategoryRepository>();
 
         // Services
-        services.AddScoped<IProductDomainServce, ProductDomainServce>();
-        services.AddScoped<ICategoryDomainServce, CategoryDomainServce>();
+        services.AddScoped<IProductDomainService, ProductDomainService>();
+        services.AddScoped<ICategoryDomainService, CategoryDomainService>();
 
         return services;
     }

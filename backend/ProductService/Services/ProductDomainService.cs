@@ -5,12 +5,12 @@ using ProductService.Mapping;
 
 namespace ProductService.Services;
 
-public class ProductDomainServce : IProductDomainServce
+public class ProductDomainService : IProductDomainService
 {
     private readonly IProductRepository _productRepo;
     private readonly ICategoryRepository _categoryRepo;
 
-    public ProductDomainServce(IProductRepository productRepo, ICategoryRepository categoryRepo)
+    public ProductDomainService(IProductRepository productRepo, ICategoryRepository categoryRepo)
     {
         _productRepo = productRepo;
         _categoryRepo = categoryRepo;

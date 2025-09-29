@@ -3,7 +3,7 @@ using ProductService.DTOs;
 
 namespace ProductService.Services;
 
-public interface IProductDomainServce
+public interface IProductDomainService
 {
     Task<ProductDto> CreateAsync(CreateProductDto dto);
     Task<ProductDto?> GetByIdAsync(Guid id);

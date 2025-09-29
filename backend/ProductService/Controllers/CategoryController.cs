@@ -8,9 +8,9 @@ namespace ProductService.Controllers;
 [ApiController]
 public class CategoryController : ControllerBase
 {
-    private readonly ICategoryDomainServce _categoryDomainServce;
+    private readonly ICategoryDomainService _categoryDomainServce;
 
-    public CategoryController(ICategoryDomainServce categoryDomainServce)
+    public CategoryController(ICategoryDomainService categoryDomainServce)
     {
         _categoryDomainServce = categoryDomainServce;
     }

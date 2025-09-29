@@ -3,7 +3,7 @@ using ProductService.DTOs;
 
 namespace ProductService.Services;
 
-public interface ICategoryDomainServce
+public interface ICategoryDomainService
 {
     Task<CategoryDto> CreateAsync(CreateCategoryDto dto);
     Task<CategoryDto?> GetByIdAsync(Guid id);
