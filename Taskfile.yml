@@ -1,0 +1,38 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - dotnet build
+
+  up:
+    cmds:
+      - docker compose up -d
+
+  stop:
+    cmds:
+      - docker compose stop
+
+  down:
+    cmds:
+      - docker compose down
+
+  logs:
+    cmds:
+      - docker compose logs -f
+
+  up-mssql:
+    cmds:
+      - docker compose up -d mssql
+
+  migrate-product:
+    cmds:
+      - dotnet ef database update --project backend/ProductService
+
+  run-product:
+    cmds:
+      - dotnet run --project backend/ProductService
+
+  watch-product:
+    cmds:
+      - dotnet watch --project backend/ProductService

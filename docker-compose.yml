@@ -1,0 +1,32 @@
+services:
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Password@123"
+    platform: "linux/amd64"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+  auction-svc:
+    image: product-svc
+    container_name: product-svc
+    build:
+      context: .
+      dockerfile: backend/ProductService/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=mssql,1433;Database=EshopDB;User ID=sa;Password=Password@123;TrustServerCertificate=True
+    ports:
+      - 5292:80
+    depends_on:
+      mssql:
+        condition: service_started
+
+volumes:
+  mssql-data:

@@ -1,0 +1,26 @@
+@ProductService_HostAddress = http://localhost:5292
+
+### --- Categories
+
+### Get all categories
+GET {{ProductService_HostAddress}}/api/v1/category/
+Accept: application/json
+
+### Get a category by ID
+GET {{ProductService_HostAddress}}/api/v1/category/c8df8272-f02e-4b12-969e-1c5aaa18e780
+Accept: application/json
+
+
+### --- Products
+
+### Get all products
+GET {{ProductService_HostAddress}}/api/v1/product/
+Accept: application/json
+
+### Get products in stock only
+GET {{ProductService_HostAddress}}/api/v1/product/?inStock=true
+Accept: application/json
+
+### Get a product by ID
+GET {{ProductService_HostAddress}}/api/v1/product/aa28cfed-4461-4375-b51b-1af4603c2663
+Accept: application/json
