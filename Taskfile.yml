@@ -25,6 +25,10 @@ tasks:
     cmds:
       - docker compose up -d mssql
 
+  test:
+    cmds:
+      - dotnet test
+
   migrate-product:
     cmds:
       - dotnet ef database update --project backend/ProductService
