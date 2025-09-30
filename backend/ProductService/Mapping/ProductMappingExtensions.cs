@@ -1,5 +1,6 @@
 using System;
 using Core.Builders;
+using Core.Contracts;
 using Core.Domain;
 using ProductService.DTOs;
 
@@ -18,6 +19,7 @@ public static class ProductMappingExtensions
             Price = product.Price,
             StockQuantity = product.StockQuantity,
             CreatedAt = product.CreatedAt,
+            UpdatedAt = product.UpdatedAt,
             CategoryNames = product.Categories.Select(c => c.Name).ToList()
         };
     }
@@ -44,5 +46,43 @@ public static class ProductMappingExtensions
         if (categories is not null) product.Categories = categories;
 
         product.UpdatedAt = DateTime.UtcNow;
+    }
+
+    public static void UpdateStock(this Product product, int newStockQuantity)
+    {
+        product.StockQuantity = newStockQuantity;
+        product.UpdatedAt = DateTime.UtcNow;
+    }
+
+    public static ProductCreated ToProductCreatedMessage(this ProductDto product)
+    {
+        return new ProductCreated
+        {
+            Id = product.Id,
+            Name = product.Name,
+            ImageUrl = product.ImageUrl,
+            Description = product.Description,
+            Price = product.Price,
+            StockQuantity = product.StockQuantity,
+            CreatedAt = product.CreatedAt,
+            UpdatedAt = product.CreatedAt,
+            CategoryNames = product.CategoryNames
+        };
+    }
+
+    public static ProductUpdated ToProductUpdatedMessage(this ProductDto product)
+    {
+        return new ProductUpdated
+        {
+            Id = product.Id,
+            Name = product.Name,
+            ImageUrl = product.ImageUrl,
+            Description = product.Description,
+            Price = product.Price,
+            StockQuantity = product.StockQuantity,
+            CreatedAt = product.CreatedAt,
+            UpdatedAt = product.UpdatedAt,
+            CategoryNames = product.CategoryNames
+        };
     }
 }

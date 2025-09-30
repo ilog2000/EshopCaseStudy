@@ -6,20 +6,13 @@ namespace ProductService.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class CategoryController : ControllerBase
+public class CategoryController(ICategoryDomainService categoryDomainServce) : ControllerBase
 {
-    private readonly ICategoryDomainService _categoryDomainServce;
-
-    public CategoryController(ICategoryDomainService categoryDomainServce)
-    {
-        _categoryDomainServce = categoryDomainServce;
-    }
-
     [HttpGet]
     [ProducesResponseType<List<CategoryDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCategories()
     {
-        var categories = await _categoryDomainServce.GetAllAsync();
+        var categories = await categoryDomainServce.GetAllAsync();
         return Ok(categories);
     }
 
@@ -28,7 +21,7 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCategory(Guid id)
     {
-        var category = await _categoryDomainServce.GetByIdAsync(id);
+        var category = await categoryDomainServce.GetByIdAsync(id);
         if (category == null)
         {
             return NotFound();
@@ -40,7 +33,7 @@ public class CategoryController : ControllerBase
     [ProducesResponseType<CategoryDto>(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto dto)
     {
-        var category = await _categoryDomainServce.CreateAsync(dto);
+        var category = await categoryDomainServce.CreateAsync(dto);
         return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
     }
 
@@ -49,7 +42,7 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] UpdateCategoryDto updatedCategory)
     {
-        var category = await _categoryDomainServce.UpdateAsync(id, updatedCategory);
+        var category = await categoryDomainServce.UpdateAsync(id, updatedCategory);
         if (category == null)
         {
             return NotFound();
@@ -63,7 +56,7 @@ public class CategoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteCategory(Guid id)
     {
-        var success = await _categoryDomainServce.DeleteAsync(id);
+        var success = await categoryDomainServce.DeleteAsync(id);
         if (!success)
         {
             return NotFound();

@@ -12,6 +12,13 @@ services:
     volumes:
       - mssql-data:/var/opt/mssql
 
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
   auction-svc:
     image: product-svc
     container_name: product-svc
@@ -22,10 +29,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__DefaultConnection=Server=mssql,1433;Database=EshopDB;User ID=sa;Password=Password@123;TrustServerCertificate=True
+      - RabbitMQ__Host=rabbitmq
     ports:
       - 5292:80
     depends_on:
       mssql:
+        condition: service_started
+      rabbitmq:
         condition: service_started
 
 volumes:

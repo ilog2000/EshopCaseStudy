@@ -25,6 +25,10 @@ tasks:
     cmds:
       - docker compose up -d mssql
 
+  up-rabbitmq:
+    cmds:
+      - docker compose up -d rabbitmq
+
   test:
     cmds:
       - dotnet test
@@ -40,3 +44,7 @@ tasks:
   watch-product:
     cmds:
       - dotnet watch --project backend/ProductService
+
+  test-consumer:
+    cmds:
+      - dotnet run --project backend/TestMessageConsumer

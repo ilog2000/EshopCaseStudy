@@ -1,5 +1,20 @@
 @ProductService_HostAddress = http://localhost:5292
 
+### --- Swagger and API Documentation
+### OpenAPI JSON
+GET {{ProductService_HostAddress}}/openapi/v1.json
+### Swagger UI
+GET {{ProductService_HostAddress}}/swagger/index.html
+### ReDoc
+GET {{ProductService_HostAddress}}/api-docs/index.html
+### Scalar
+GET {{ProductService_HostAddress}}/scalar/v1
+
+### --- Health
+
+### Get service health
+GET {{ProductService_HostAddress}}/api/health
+
 ### --- Categories
 
 ### Get all categories
@@ -24,3 +39,41 @@ Accept: application/json
 ### Get a product by ID
 GET {{ProductService_HostAddress}}/api/v1/product/aa28cfed-4461-4375-b51b-1af4603c2663
 Accept: application/json
+
+### Create a new product
+# @name createProduct
+POST {{ProductService_HostAddress}}/api/v1/product/
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "New Product",
+    "description": "Description of the new product",
+    "imageUrl": "http://example.com/new-product.jpg",
+    "price": 99.99,
+    "stockQuantity": 50,
+    "categoryIds": ["c8df8272-f02e-4b12-969e-1c5aaa18e780"]
+}
+
+### Store the created product ID for further requests
+@productId = {{createProduct.response.body.id}}
+
+### Update an existing product
+PUT {{ProductService_HostAddress}}/api/v1/product/{{productId}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "Updated Product Name",
+    "description": "Updated description",
+    "imageUrl": "http://example.com/updated-product.jpg",
+    "price": 89.99,
+    "stockQuantity": 30,
+    "categoryIds": ["c8df8272-f02e-4b12-969e-1c5aaa18e780"]
+}
+
+### Delete a product
+DELETE {{ProductService_HostAddress}}/api/v1/product/{{productId}}
+Accept: application/json
+
+### --- End of File ---

@@ -1,25 +1,21 @@
+using Core.Contracts;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.DTOs;
+using ProductService.Mapping;
 using ProductService.Services;
 
 namespace ProductService.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class ProductController : ControllerBase
+public class ProductController(IProductDomainService productDomainServce, IPublishEndpoint publishEndpoint) : ControllerBase
 {
-    private readonly IProductDomainService _productDomainServce;
-
-    public ProductController(IProductDomainService productDomainServce)
-    {
-        _productDomainServce = productDomainServce;
-    }
-
     [HttpGet]
     [ProducesResponseType<List<ProductDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetProducts([FromQuery] bool inStock = false)
     {
-        var products = await _productDomainServce.GetAllAsync(inStock);
+        var products = await productDomainServce.GetAllAsync(inStock);
         return Ok(products);
     }
 
@@ -28,7 +24,7 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetProduct(Guid id)
     {
-        var product = await _productDomainServce.GetByIdAsync(id);
+        var product = await productDomainServce.GetByIdAsync(id);
         if (product == null)
         {
             return NotFound();
@@ -40,7 +36,8 @@ public class ProductController : ControllerBase
     [ProducesResponseType<ProductDto>(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
     {
-        var product = await _productDomainServce.CreateAsync(dto);
+        var product = await productDomainServce.CreateAsync(dto);
+        await publishEndpoint.Publish(product.ToProductCreatedMessage());
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
     }
 
@@ -49,11 +46,12 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductDto updatedProduct)
     {
-        var product = await _productDomainServce.UpdateAsync(id, updatedProduct);
+        var product = await productDomainServce.UpdateAsync(id, updatedProduct);
         if (product == null)
         {
             return NotFound();
         }
+        await publishEndpoint.Publish(product.ToProductUpdatedMessage());
         return Ok(product);
     }
 
@@ -62,11 +60,12 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateProductStock(Guid id, [FromBody] int newStockQuantity)
     {
-        var product = await _productDomainServce.UpdateProductStockAsync(id, newStockQuantity);
+        var product = await productDomainServce.UpdateProductStockAsync(id, newStockQuantity);
         if (product == null)
         {
             return NotFound();
         }
+        await publishEndpoint.Publish(product.ToProductUpdatedMessage());
         return Ok(product);
     }
 
@@ -76,11 +75,12 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {
-        var success = await _productDomainServce.DeleteAsync(id);
+        var success = await productDomainServce.DeleteAsync(id);
         if (!success)
         {
             return NotFound();
         }
+        await publishEndpoint.Publish(new ProductDeleted { Id = id });
         return NoContent();
     }
 }
