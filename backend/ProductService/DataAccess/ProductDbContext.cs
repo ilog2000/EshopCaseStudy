@@ -1,5 +1,6 @@
 using System;
 using Core.Domain;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
 namespace ProductService.DataAccess;
@@ -18,5 +19,11 @@ public class ProductDbContext(DbContextOptions<ProductDbContext> options)
 
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+
+        // MassTransit Outbox and Inbox tables
+        // Don't forget to add migrations after adding these
+        modelBuilder.AddInboxStateEntity();
+        modelBuilder.AddOutboxMessageEntity();
+        modelBuilder.AddOutboxStateEntity();
     }
 }

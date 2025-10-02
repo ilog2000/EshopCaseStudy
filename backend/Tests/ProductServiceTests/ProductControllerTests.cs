@@ -11,20 +11,6 @@ namespace ProductServiceTests;
 
 public class ProductControllerTests
 {
-    Mock<MassTransit.IPublishEndpoint> mockPublishEndpoint = new();
-
-    public ProductControllerTests()
-    {
-        mockPublishEndpoint
-            .Setup(pe => pe.Publish(It.IsAny<object>(), It.IsAny<CancellationToken>()))
-            .Callback<object, CancellationToken>((message, _) =>
-            {
-                var json = JsonSerializer.Serialize(message);
-                Debug.WriteLine($"Published message: {json}");
-            })
-            .Returns(Task.CompletedTask);
-    }
-
     [Fact]
     public async Task GetProducts_ReturnsOkResult_WithProducts()
     {
@@ -36,7 +22,7 @@ public class ProductControllerTests
             new ProductDto { Id = Guid.NewGuid(), Name = "Product 1" },
             new ProductDto { Id = Guid.NewGuid(), Name = "Product 2" }
         });
-        var controller = new ProductController(mockService.Object, mockPublishEndpoint.Object);
+        var controller = new ProductController(mockService.Object);
 
         // Act
         var result = await controller.GetProducts();
@@ -56,7 +42,7 @@ public class ProductControllerTests
         var productId = Guid.NewGuid();
         var mockService = new Mock<IProductDomainService>();
         mockService.Setup(s => s.GetByIdAsync(productId)).ReturnsAsync((ProductDto?)null);
-        var controller = new ProductController(mockService.Object, mockPublishEndpoint.Object);
+        var controller = new ProductController(mockService.Object);
 
         // Act
         var result = await controller.GetProduct(productId);
@@ -87,7 +73,7 @@ public class ProductControllerTests
         };
         var mockService = new Mock<IProductDomainService>();
         mockService.Setup(s => s.CreateAsync(createDto)).ReturnsAsync(createdProduct);
-        var controller = new ProductController(mockService.Object, mockPublishEndpoint.Object);
+        var controller = new ProductController(mockService.Object);
 
         // Act
         var result = await controller.CreateProduct(createDto);
@@ -124,7 +110,7 @@ public class ProductControllerTests
         };
         var mockService = new Mock<IProductDomainService>();
         mockService.Setup(s => s.UpdateAsync(productId, updateDto)).ReturnsAsync(updatedProduct);
-        var controller = new ProductController(mockService.Object, mockPublishEndpoint.Object);
+        var controller = new ProductController(mockService.Object);
 
         // Act
         var result = await controller.UpdateProduct(productId, updateDto);
@@ -154,7 +140,7 @@ public class ProductControllerTests
         };
         var mockService = new Mock<IProductDomainService>();
         mockService.Setup(s => s.UpdateProductStockAsync(productId, newStockQuantity)).ReturnsAsync(updatedProduct);
-        var controller = new ProductController(mockService.Object, mockPublishEndpoint.Object);
+        var controller = new ProductController(mockService.Object);
 
         // Act
         var result = await controller.UpdateProductStock(productId, newStockQuantity);
@@ -175,7 +161,7 @@ public class ProductControllerTests
         var newStockQuantity = 15;
         var mockService = new Mock<IProductDomainService>();
         mockService.Setup(s => s.UpdateProductStockAsync(productId, newStockQuantity)).ReturnsAsync((ProductDto?)null);
-        var controller = new ProductController(mockService.Object, mockPublishEndpoint.Object);
+        var controller = new ProductController(mockService.Object);
 
         // Act
         var result = await controller.UpdateProductStock(productId, newStockQuantity);
@@ -199,7 +185,7 @@ public class ProductControllerTests
         };
         var mockService = new Mock<IProductDomainService>();
         mockService.Setup(s => s.GetByIdAsync(productId)).ReturnsAsync(product);
-        var controller = new ProductController(mockService.Object, mockPublishEndpoint.Object);
+        var controller = new ProductController(mockService.Object);
 
         // Act
         var result = await controller.GetProduct(productId);

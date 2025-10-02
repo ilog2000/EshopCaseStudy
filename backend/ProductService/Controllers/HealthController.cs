@@ -1,20 +1,17 @@
-using System.Threading.Tasks;
-using Core.Contracts;
-using MassTransit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProductService.Services;
 
 namespace ProductService.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class HealthController(IPublishEndpoint publishEndpoint) : ControllerBase
+public class HealthController(HealthCheckPublisher healthCheckPublisher) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetHealth()
     {
-        await publishEndpoint.Publish(new HealthCheck());
+        await healthCheckPublisher.PublishHealthCheckAsync();
         return Ok("Healthy");
     }
 }

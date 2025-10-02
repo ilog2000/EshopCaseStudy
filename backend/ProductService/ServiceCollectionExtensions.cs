@@ -16,6 +16,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProductDomainService, ProductDomainService>();
         services.AddScoped<ICategoryDomainService, CategoryDomainService>();
 
+        // Extras
+        services.AddScoped<HealthCheckPublisher>();
+
         return services;
     }
 }

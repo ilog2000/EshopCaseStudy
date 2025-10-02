@@ -1,15 +1,12 @@
-using Core.Contracts;
-using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using ProductService.DTOs;
-using ProductService.Mapping;
 using ProductService.Services;
 
 namespace ProductService.Controllers;
 
 [Route("api/v1/[controller]")]
 [ApiController]
-public class ProductController(IProductDomainService productDomainServce, IPublishEndpoint publishEndpoint) : ControllerBase
+public class ProductController(IProductDomainService productDomainServce) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType<List<ProductDto>>(StatusCodes.Status200OK)]
@@ -37,7 +34,6 @@ public class ProductController(IProductDomainService productDomainServce, IPubli
     public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
     {
         var product = await productDomainServce.CreateAsync(dto);
-        await publishEndpoint.Publish(product.ToProductCreatedMessage());
         return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, product);
     }
 
@@ -51,7 +47,6 @@ public class ProductController(IProductDomainService productDomainServce, IPubli
         {
             return NotFound();
         }
-        await publishEndpoint.Publish(product.ToProductUpdatedMessage());
         return Ok(product);
     }
 
@@ -65,7 +60,6 @@ public class ProductController(IProductDomainService productDomainServce, IPubli
         {
             return NotFound();
         }
-        await publishEndpoint.Publish(product.ToProductUpdatedMessage());
         return Ok(product);
     }
 
@@ -80,7 +74,6 @@ public class ProductController(IProductDomainService productDomainServce, IPubli
         {
             return NotFound();
         }
-        await publishEndpoint.Publish(new ProductDeleted { Id = id });
         return NoContent();
     }
 }

@@ -15,6 +15,15 @@ builder.Services.AddDomainServices();
 
 builder.Services.AddMassTransit(x =>
 {
+    x.AddEntityFrameworkOutbox<ProductDbContext>(o =>
+    {
+        o.QueryDelay = TimeSpan.FromSeconds(10);
+        o.UseSqlServer();
+        o.UseBusOutbox();
+    });
+
+    x.SetKebabCaseEndpointNameFormatter();
+
     x.UsingRabbitMq((context, cfg) =>
     {
         cfg.UseMessageRetry(r =>

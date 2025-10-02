@@ -54,7 +54,7 @@ public static class ProductMappingExtensions
         product.UpdatedAt = DateTime.UtcNow;
     }
 
-    public static ProductCreated ToProductCreatedMessage(this ProductDto product)
+    public static ProductCreated ToProductCreatedMessage(this Product product)
     {
         return new ProductCreated
         {
@@ -66,11 +66,11 @@ public static class ProductMappingExtensions
             StockQuantity = product.StockQuantity,
             CreatedAt = product.CreatedAt,
             UpdatedAt = product.CreatedAt,
-            CategoryNames = product.CategoryNames
+            CategoryNames = product.Categories.Select(c => c.Name).ToList()
         };
     }
 
-    public static ProductUpdated ToProductUpdatedMessage(this ProductDto product)
+    public static ProductUpdated ToProductUpdatedMessage(this Product product)
     {
         return new ProductUpdated
         {
@@ -82,7 +82,7 @@ public static class ProductMappingExtensions
             StockQuantity = product.StockQuantity,
             CreatedAt = product.CreatedAt,
             UpdatedAt = product.UpdatedAt,
-            CategoryNames = product.CategoryNames
+            CategoryNames = product.Categories.Select(c => c.Name).ToList()
         };
     }
 }

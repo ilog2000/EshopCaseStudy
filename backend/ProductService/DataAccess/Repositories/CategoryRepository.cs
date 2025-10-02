@@ -28,25 +28,29 @@ public class CategoryRepository : ICategoryRepository
         return await _dbContext.Categories.Where(c => ids.Contains(c.Id)).ToListAsync();
     }
 
-    public async Task AddAsync(Category category)
+    public async Task<bool> AddAsync(Category category)
     {
         _dbContext.Categories.Add(category);
-        await _dbContext.SaveChangesAsync();
+        var result = await _dbContext.SaveChangesAsync();
+        return result > 0;
     }
 
-    public async Task UpdateAsync(Category category)
+    public async Task<bool> UpdateAsync(Category category)
     {
         _dbContext.Entry(category).State = EntityState.Modified;
-        await _dbContext.SaveChangesAsync();
+        var result = await _dbContext.SaveChangesAsync();
+        return result > 0;
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var category = await _dbContext.Categories.FindAsync(id);
         if (category != null)
         {
             _dbContext.Categories.Remove(category);
-            await _dbContext.SaveChangesAsync();
+            var result = await _dbContext.SaveChangesAsync();
+            return result > 0;
         }
+        return false;
     }
 }

@@ -54,25 +54,29 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task AddAsync(Product product)
+    public async Task<bool> AddAsync(Product product)
     {
         _dbContext.Products.Add(product);
-        await _dbContext.SaveChangesAsync();
+        var result = await _dbContext.SaveChangesAsync();
+        return result > 0;
     }
 
-    public async Task UpdateAsync(Product product)
+    public async Task<bool> UpdateAsync(Product product)
     {
         _dbContext.Entry(product).State = EntityState.Modified;
-        await _dbContext.SaveChangesAsync();
+        var result = await _dbContext.SaveChangesAsync();
+        return result > 0;
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var product = await _dbContext.Products.FindAsync(id);
         if (product != null)
         {
             _dbContext.Products.Remove(product);
-            await _dbContext.SaveChangesAsync();
+            var result = await _dbContext.SaveChangesAsync();
+            return result > 0;
         }
+        return false;
     }
 }
